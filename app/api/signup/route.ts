@@ -5,8 +5,11 @@ import { NextResponse } from "next/server";
 import User from "@/app/model/User";
 
 export async function POST(request: Request) {
+  await ConnectToDB();
+
   try {
     const body = await request.json();
+    console.log(body);
     const { username, email, password } = body;
 
     if (!username || !email || !password) {
@@ -26,7 +29,7 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newUser = new User({
-      name,
+      username,
       email,
       password: hashedPassword,
     });
@@ -37,6 +40,8 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error) {
+    console.error("Signup error:", error);
+
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

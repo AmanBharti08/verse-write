@@ -21,10 +21,7 @@ const userSchema:Schema<IUser> = new Schema({
   password: {
     type: String,
     required: [true, "Password is required"],
-    match: [
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, 
-      "Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:",
-    ],
+    minlength: [8, "Password should be atleast 8 characters"]
   },
   createdAt: {
     type: Date,
