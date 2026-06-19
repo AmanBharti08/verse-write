@@ -11,6 +11,7 @@ const userSchema:Schema<IUser> = new Schema({
   username: {
     type: String,
     required: [true, "Username is required"],
+    unique: [true,"Try Another Username"]
   },
   email: {
     type: String,

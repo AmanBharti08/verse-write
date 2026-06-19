@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import User from "@/app/model/User";
+import { error } from "console";
 
 export async function POST(request: Request) {
   await ConnectToDB();
@@ -21,6 +22,25 @@ export async function POST(request: Request) {
           status: 400,
         },
       );
+    }
+
+    const existingUser =await User.findOne({$or: [{ username }, { email }]})
+
+    if(existingUser){
+      if (existingUser.username === username) {
+        return NextResponse.json({
+          error:"Username Already Exist"
+        },{
+          status:409
+        })
+      }
+      if (existingUser.email === email) {
+        return NextResponse.json({
+          error:"Email Already Exist"
+        },{
+          status:409
+        })
+      }
     }
 
     // Hash the password securely
@@ -43,7 +63,7 @@ export async function POST(request: Request) {
     console.error("Signup error:", error);
 
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal Server Error " + error },
       { status: 500 },
     );
   }

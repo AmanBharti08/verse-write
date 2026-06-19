@@ -1,17 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function SignUp() {
+  const router = useRouter();
   const [formData, setFormData] = useState<{
     username: string;
     email: string;
     password: string;
   }>({ username: "", email: "", password: "" });
+
   const [error, setError] = useState<String>("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e:React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
@@ -22,8 +25,14 @@ export default function SignUp() {
         body: JSON.stringify(formData),
       });
 
-      console.log(response)
-      console.log(formData)
+      const data = await response.json();
+      console.log(data);
+
+      if (data.error) {
+        setError(data.error);
+      } else {
+        router.push("/signin");
+      }
     } catch (error) {
       setError("Error Found:" + error);
       console.log(error);
@@ -41,6 +50,7 @@ export default function SignUp() {
     <main className="w-full h-full bg-zinc-950 flex justify-center items-center">
       <section className="flex flex-col items-center gap-10 p-10 rounded-2xl bg-black shadow-white shadow w-120">
         <h1 className="text-white text-2xl font-bold">SIGN UP</h1>
+        {error && <p style={{ color: "red" }}>{error}</p>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
           <input
             type="text"
